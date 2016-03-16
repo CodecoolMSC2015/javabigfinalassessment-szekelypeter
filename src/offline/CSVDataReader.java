@@ -18,14 +18,14 @@ public class CSVDataReader extends DataReader{
 	@Override
 	public Set<Person> getPersons(){
 		Set<Person> listOfGoodPersons=new HashSet<Person>();
-		String csvFile = "C:\\Users\\Szekely Peter\\Desktop\\bigfinalassassment\\javabigfinalassessment-szekelypeter\\Documentation\\persons.csv";
-		BufferedReader br = null;
+		String csvFile = csvFilePath;
+		BufferedReader bufferedCsVFile = null;
 		String line = "";
 		try {
-			br = new BufferedReader(new FileReader(csvFile));
-			while ((line = br.readLine()) != null) {
+			bufferedCsVFile = new BufferedReader(new FileReader(csvFile));
+			while ((line = bufferedCsVFile.readLine()) != null) {
 				String[] personDatas = line.split(",");
-				Person testedPerson= getPerson(personDatas[0],personDatas[1],br);
+				Person testedPerson= getPerson(personDatas[0],personDatas[1],bufferedCsVFile);
 				if (searchType==SearchType.Mandatory){
 					if(checkSkillsMandatory(testedPerson,searchCriteria))
 						listOfGoodPersons.add(testedPerson);
@@ -40,9 +40,9 @@ public class CSVDataReader extends DataReader{
 			System.out.println("File not found");
 		}
 		finally {
-			if (br != null) {
+			if (bufferedCsVFile != null) {
 			try {
-				br.close();
+				bufferedCsVFile.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 				}
@@ -58,7 +58,8 @@ public class CSVDataReader extends DataReader{
 			while ((line = csvfile.readLine()) != null) {
 				String[] personDatas = line.split(",");
 					if(email==personDatas[1]){
-						person.addSkill(new Skill(personDatas[2],personDatas[3], Double.parseDouble(personDatas[4])));
+						Skill skill=new Skill(personDatas[2],personDatas[3], Double.parseDouble(personDatas[4]));
+						person.addSkill(skill);
 					}
 				}
 		} catch (IOException e) {
