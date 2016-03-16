@@ -37,17 +37,10 @@ public class CSVDataReader extends DataReader{
 			}
 		}
 		catch (Exception e){
-			System.out.println("File not found");
+			System.out.println(e);
 		}
-		finally {
-			if (bufferedCsVFile != null) {
-			try {
-				bufferedCsVFile.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-				}
-			}
-		}		
+		
+				
 		return listOfGoodPersons;		
 	}
 	
@@ -57,15 +50,13 @@ public class CSVDataReader extends DataReader{
 		try {
 			while ((line = csvfile.readLine()) != null) {
 				String[] personDatas = line.split(",");
-					if(email==personDatas[1]){
-						Skill skill=new Skill(personDatas[2],personDatas[3], Double.parseDouble(personDatas[4]));
+					if(personDatas[1].equals(email)){
+						Skill skill=new Skill(personDatas[2],"0", Double.parseDouble(personDatas[4]));
 						person.addSkill(skill);
 					}
 				}
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
-		
 		return person;
 	}
 	

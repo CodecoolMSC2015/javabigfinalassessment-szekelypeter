@@ -28,27 +28,33 @@ public class SearchServlet extends HttpServlet {
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 		request.getRequestDispatcher("index.html").include(request, response);
+		new PersonStoreServerSocket();
 		
 		String searchCriteria = request.getParameter("searchCriteria");
-		String searchType=request.getParameter("searchType");
-		CSVDataReader csvFile=new CSVDataReader("C:\\Users\\Szekely Peter\\Desktop\\bigfinalassassment\\javabigfinalassessment-szekelypeter\\Documentation\\persons.csv");
-
-		communicateWithPersonStoreServer(searchType,searchCriteria);
+		String searchType=request.getParameter("searchType");	
+		System.out.println(searchType);
+		System.out.println(searchCriteria);
+		Set<Person> goodPersonList=communicateWithPersonStoreServer(searchType,searchCriteria);
+		for (Person person:goodPersonList){
+			out.print(person.getName());
+		}
+		
 	}
 
 	public Set<Person> communicateWithPersonStoreServer(String searchType,String searchCriteria){
-		Set<Person> goodPersonList=new HashSet<>();
+		Set<Person> goodPersonList=new HashSet<Person>();
 		try{
-			Socket s=new Socket("localhost",678);
-			InputStream is=s.getInputStream();
-			OutputStream os=s.getOutputStream();
-			ObjectOutputStream oos=new ObjectOutputStream(os);
-			oos.writeObject(searchType+";"+searchCriteria);
-			ObjectInputStream ois=new ObjectInputStream(is);
-			goodPersonList= (Set<Person>) ois.readObject();
-			os.close();
-			is.close();
-			s.close();
+			Socket socket=new Socket("localhost",10012);
+			OutputStream outputStream=socket.getOutputStream();
+			ObjectOutputStream objectOutputStream=new ObjectOutputStream(outputStream);
+			objectOutputStream.writeObject(searchType);
+			objectOutputStream.writeObject(searchCriteria);
+			InputStream inputStream=socket.getInputStream();
+			ObjectInputStream objectInputStream=new ObjectInputStream(inputStream);
+			goodPersonList= (Set<Person>) objectInputStream.readObject();
+			outputStream.close();
+			inputStream.close();
+			socket.close();
 		}
 		catch(Exception e){
 			e.printStackTrace();
